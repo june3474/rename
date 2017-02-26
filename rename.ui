@@ -46,7 +46,11 @@
       </widget>
      </item>
      <item row="0" column="3">
-      <widget class="QComboBox" name="comboBox"/>
+      <widget class="QComboBox" name="comboBox">
+       <property name="focusPolicy">
+        <enum>Qt::StrongFocus</enum>
+       </property>
+      </widget>
      </item>
      <item row="0" column="2">
       <widget class="QPushButton" name="btnFileBrowse">
@@ -55,6 +59,9 @@
          <width>30</width>
          <height>16777215</height>
         </size>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::StrongFocus</enum>
        </property>
        <property name="text">
         <string/>
@@ -69,6 +76,12 @@
          <height>16</height>
         </size>
        </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
+       <property name="default">
+        <bool>false</bool>
+       </property>
       </widget>
      </item>
     </layout>
@@ -79,7 +92,7 @@
       <widget class="QLineEdit" name="lineEditOld"/>
      </item>
      <item row="1" column="0">
-      <widget class="QLabel" name="choosePhraseToChangeToLabel">
+      <widget class="QLabel" name="lblPhraseToChangeTo">
        <property name="text">
         <string>Phrase to change to:</string>
        </property>
@@ -89,7 +102,7 @@
       <widget class="QLineEdit" name="lineEditNew"/>
      </item>
      <item row="0" column="0">
-      <widget class="QLabel" name="choosePhraseToChangeLabel">
+      <widget class="QLabel" name="lblPhraseToChange">
        <property name="layoutDirection">
         <enum>Qt::RightToLeft</enum>
        </property>
@@ -106,10 +119,10 @@
    <item row="4" column="0">
     <layout class="QHBoxLayout" name="Files">
      <item>
-      <widget class="QListWidget" name="listWidgetBefore"/>
+      <widget class="QListView" name="listBefore"/>
      </item>
      <item>
-      <widget class="QLabel" name="label_2">
+      <widget class="QLabel" name="lblArrow">
        <property name="minimumSize">
         <size>
          <width>0</width>
@@ -118,7 +131,7 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>77</width>
+         <width>50</width>
          <height>16777215</height>
         </size>
        </property>
@@ -134,7 +147,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QListWidget" name="listWidgetAfter"/>
+      <widget class="QListView" name="listAfter"/>
      </item>
     </layout>
    </item>
@@ -190,6 +203,18 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>lineEditDir</tabstop>
+  <tabstop>btnFileBrowse</tabstop>
+  <tabstop>comboBox</tabstop>
+  <tabstop>lineEditOld</tabstop>
+  <tabstop>lineEditNew</tabstop>
+  <tabstop>chkBoxGreedy</tabstop>
+  <tabstop>chkBoxRecursive</tabstop>
+  <tabstop>listBefore</tabstop>
+  <tabstop>listAfter</tabstop>
+  <tabstop>btnRun</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

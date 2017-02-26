@@ -13,9 +13,11 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        rename.cpp
+        rename.cpp \
+    regexdelegate.cpp
 
-HEADERS  += rename.h
+HEADERS  += rename.h \
+    regexdelegate.h
 
 FORMS    += rename.ui
 
