@@ -80,40 +80,31 @@ QFileInfoList Rename::getFileInfoList(const QString &path, bool recursive)
     return fileInfoList;
 }
 
-void Rename::on_lineEditDir_editingFinished()
+void Rename::on_lineEditDir_returnPressed()
 {
     QString path = QDir::cleanPath(QDir::toNativeSeparators(ui->lineEditDir->text()));
     QFileInfo info = QFileInfo(path);
     if(info.isDir()){
         ui->lineEditDir->setText(path);
+        this->focusNextChild();
+
         updateModel();
     }
     else {
         model.clear();
-
-        // If we don't block sigals, we have two editignFinished() signals emitted
-        // first, when the return key is entered, and the second, when the msgBox takes the focus.
-        // So, msgBox is shown twice.
-        ui->lineEditDir->blockSignals(true);
-        ui->btnRun->setDisabled(true);
         QMessageBox::critical(this, tr("Error"), tr("Invalid Directory!"));
         ui->lineEditDir->selectAll();
-        ui->lineEditDir->blockSignals(false);
     }
 }
 
 void Rename::on_btnFileBrowse_clicked()
 {
-    // prevent wrong-dir-msgBox when clicked even with a wrong dir in lineEditDir.
-    ui->lineEditDir->blockSignals(true);
     QString oldDir = ui->lineEditDir->text();
     QString dir = QFileDialog::getExistingDirectory(this, "Choose the directory", ui->lineEditDir->text());
     if(dir.isEmpty())
         dir = oldDir;
-
     ui->lineEditDir->setText(dir);
-    ui->lineEditDir->selectAll();
-    ui->lineEditDir->blockSignals(false);
+    this->focusNextChild();
 
     updateModel();
 }
@@ -124,7 +115,7 @@ void Rename::on_comboBox_currentIndexChanged(int /* index */)
     updateModel();
 }
 
-void Rename::on_lineEditOld_editingFinished()
+void Rename::on_lineEditOld_returnPressed()
 {
     //QString escapedStr = QRegExp::escape(ui->lineEditOld->text());
     //QRegExp *regEx = new QRegExp(escapedStr);
@@ -136,15 +127,13 @@ void Rename::on_lineEditOld_editingFinished()
         this->focusNextChild();
     }
     else {
-        ui->lineEditOld->blockSignals(true);
         ui->btnRun->setDisabled(true);
         QMessageBox::critical(this, tr("Error"), tr("Invalid Regular Expression!"));
         ui->lineEditOld->selectAll();
-        ui->lineEditOld->blockSignals(false);
     }
 }
 
-void Rename::on_lineEditNew_editingFinished()
+void Rename::on_lineEditNew_returnPressed()
 {
 
 }
@@ -157,4 +146,9 @@ void Rename::on_chkBoxGreedy_stateChanged(int state)
 void Rename::on_chkBoxRecursive_stateChanged(int state)
 {
     updateModel();
+}
+
+void Rename::on_btnFileBrowse_pressed()
+{
+    on_btnFileBrowse_clicked();
 }
