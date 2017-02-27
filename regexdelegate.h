@@ -4,10 +4,16 @@
 
 const int PADDING_LEFT = 5;
 
+enum class RegExDelegateType {
+    Replace,
+    Match
+};
+
 class RegExDelegate : public QStyledItemDelegate
 {
 public:
-    RegExDelegate(QObject *parent = 0, QRegExp *regEx = (new QRegExp()), \
+    RegExDelegate(QObject *parent = 0, \
+                  QRegExp *regEx = (new QRegExp()), RegExDelegateType type = RegExDelegateType::Match,\
                   const Qt::GlobalColor bgColor = Qt::darkBlue, const Qt::GlobalColor fgColor = Qt::white);
     ~RegExDelegate();
 
@@ -26,9 +32,13 @@ public:
     void setRegEx(QRegExp *regEx);
 
 private:
+    QRegExp *regEx;
+    RegExDelegateType type;
     Qt::GlobalColor bgColor;
     Qt::GlobalColor fgColor;
-    QRegExp *regEx;
+
+    void paint_match(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    void paint_replace(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 };
 
 #endif // REGEXDELEGATE_H

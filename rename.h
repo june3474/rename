@@ -38,8 +38,8 @@ private slots:
     void on_comboBox_currentIndexChanged(int /* index */);
     void on_lineEditOld_returnPressed();
     void on_lineEditNew_returnPressed();
-    void on_chkBoxGreedy_stateChanged(int state);
-    void on_chkBoxRecursive_stateChanged(int state);
+    void on_chkBoxGreedy_stateChanged(int /* state */);
+    void on_chkBoxRecursive_stateChanged(int /* state */);
 
     void on_btnFileBrowse_pressed();
 };

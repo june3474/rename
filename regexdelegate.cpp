@@ -2,12 +2,14 @@
 #include <QPainter>
 #include <QtDebug>
 
-RegExDelegate::RegExDelegate(QObject *parent, QRegExp *regEx, \
+RegExDelegate::RegExDelegate(QObject *parent, QRegExp *regEx, RegExDelegateType type, \
                              const Qt::GlobalColor bgColor, const Qt::GlobalColor fgColor) :
     QStyledItemDelegate(parent), regEx(regEx), bgColor(bgColor), fgColor(fgColor)
 {
     if(!regEx)
         regEx = new QRegExp();
+
+    this->type = type;
 
     //setRegEx(new QRegExp("\\.o"));
 }
@@ -38,21 +40,43 @@ void RegExDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
     // The third part will be the remaining after the matching part.
     QStringList l = splitString(QString(index.data().toString()));
 
-    // draw the first part
-    painter->drawText(rect, l[0]);
-    rect.adjust(QFontMetrics(option.font).width(l[0]),0,0,0);
+    if(type == RegExDelegateType::Match){
+        // draw the first part
+        painter->drawText(rect, l[0]);
+        rect.adjust(QFontMetrics(option.font).width(l[0]),0,0,0);
 
-    // draw the second part
-    painter->save();
-    painter->setPen(QColor(fgColor));
-    painter->setBackgroundMode(Qt::OpaqueMode);
-    painter->setBackground(QBrush(bgColor));
-    painter->drawText(rect, l[1]);
-    rect.adjust(QFontMetrics(option.font).width(l[1]),0,0,0);
-    painter->restore();
+        // draw the second part
+        painter->save();
+        painter->setPen(QColor(fgColor));
+        painter->setBackgroundMode(Qt::OpaqueMode);
+        painter->setBackground(QBrush(bgColor));
+        painter->drawText(rect, l[1]);
+        rect.adjust(QFontMetrics(option.font).width(l[1]),0,0,0);
+        painter->restore();
 
-    // draw the rest
-    painter->drawText(rect, l[2]);
+        // draw the rest
+        painter->drawText(rect, l[2]);
+    }
+    else{ // if regEx!= Empty() && type == RegExDelegateType::Replace
+        QString replacedStr = index.data().toString().replace(regEx);
+
+        painter->drawText(rect, l[0]);
+        rect.adjust(QFontMetrics(option.font).width(l[0]),0,0,0);
+
+        // draw the second part
+        painter->save();
+        painter->setPen(QColor(fgColor));
+        painter->setBackgroundMode(Qt::OpaqueMode);
+        painter->setBackground(QBrush(bgColor));
+        painter->drawText(rect, replacedStr.mid());
+        rect.adjust(QFontMetrics(option.font).width(l[1]),0,0,0);
+        painter->restore();
+
+        // draw the rest
+        painter->drawText(rect, l[2]);
+
+    }
+
 }
 
 QStringList RegExDelegate::splitString(const QString &str) const
@@ -100,5 +124,15 @@ QRegExp *RegExDelegate::getRegEx() const
 void RegExDelegate::setRegEx(QRegExp *regEx)
 {
     this->regEx = regEx;
+}
+
+void RegExDelegate::paint_match(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+
+}
+
+void RegExDelegate::paint_replace(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+
 }
 

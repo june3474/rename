@@ -121,8 +121,10 @@ void Rename::on_lineEditOld_returnPressed()
     //QRegExp *regEx = new QRegExp(escapedStr);
     QRegExp *regEx = new QRegExp(ui->lineEditOld->text());
     if(regEx->isValid()){
-        delete delegateBefore;
-        delegateBefore = new RegExDelegate(this, regEx, Qt::red, Qt::white);
+        if(delegateBefore)
+            delete delegateBefore;
+        delegateBefore = new RegExDelegate(this, regEx, RegExDelegateType::Match, \
+                                           Qt::red, Qt::white);
         ui->listBefore->setItemDelegate(delegateBefore);
         this->focusNextChild();
     }
@@ -138,12 +140,12 @@ void Rename::on_lineEditNew_returnPressed()
 
 }
 
-void Rename::on_chkBoxGreedy_stateChanged(int state)
+void Rename::on_chkBoxGreedy_stateChanged(int /* state */)
 {
 
 }
 
-void Rename::on_chkBoxRecursive_stateChanged(int state)
+void Rename::on_chkBoxRecursive_stateChanged(int /* state */)
 {
     updateModel();
 }
