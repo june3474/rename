@@ -4,16 +4,14 @@
 
 const int PADDING_LEFT = 5;
 
-enum class RegExDelegateType {
-    Replace,
-    Match
-};
+enum class RegExDelegateType {Replace, Match};
+
 
 class RegExDelegate : public QStyledItemDelegate
 {
 public:
-    RegExDelegate(QObject *parent = 0, \
-                  QRegExp *regEx = (new QRegExp()), RegExDelegateType type = RegExDelegateType::Match,\
+    RegExDelegate(QObject *parent = 0, RegExDelegateType type = RegExDelegateType::Match,\
+                  const QRegExp &regEx = QRegExp(), const QString &after = QString(), \
                   const Qt::GlobalColor bgColor = Qt::darkBlue, const Qt::GlobalColor fgColor = Qt::white);
     ~RegExDelegate();
 
@@ -21,24 +19,28 @@ public:
     virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     QStringList splitString(const QString &str) const;
 
-
+    // getter & setter
     Qt::GlobalColor getBgColor() const;
     void setBgColor(const Qt::GlobalColor &color);
 
     Qt::GlobalColor getFgColor() const;
     void setFgColor(const Qt::GlobalColor &color);
 
-    QRegExp *getRegEx() const;
-    void setRegEx(QRegExp *regEx);
+    QRegExp getRegEx() const;
+    void setRegEx(const QRegExp &regEx);
+
+    QString getAfter() const;
+    void setAfter(const QString &str);
 
 private:
-    QRegExp *regEx;
     RegExDelegateType type;
+    QRegExp regEx;
+    QString after;
     Qt::GlobalColor bgColor;
     Qt::GlobalColor fgColor;
 
-    void paint_match(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-    void paint_replace(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    void paintMatch(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    void paintReplace(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 };
 
 #endif // REGEXDELEGATE_H

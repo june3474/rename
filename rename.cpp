@@ -80,6 +80,18 @@ QFileInfoList Rename::getFileInfoList(const QString &path, bool recursive)
     return fileInfoList;
 }
 
+bool Rename::checkFilename(QString fileName)
+{
+//#ifdef Q_WS_WIN
+    QRegExp filter = QRegExp("[/:*?\"<>|\\\\]");
+    if(filter.indexIn(fileName) == -1)
+        return true;
+    else
+        return false;
+//#endif
+
+}
+
 void Rename::on_lineEditDir_returnPressed()
 {
     QString path = QDir::cleanPath(QDir::toNativeSeparators(ui->lineEditDir->text()));
@@ -118,13 +130,14 @@ void Rename::on_comboBox_currentIndexChanged(int /* index */)
 void Rename::on_lineEditOld_returnPressed()
 {
     //QString escapedStr = QRegExp::escape(ui->lineEditOld->text());
-    //QRegExp *regEx = new QRegExp(escapedStr);
-    QRegExp *regEx = new QRegExp(ui->lineEditOld->text());
-    if(regEx->isValid()){
+    //QRegExp regEx = QRegExp(escapedStr);
+
+    QRegExp regEx = QRegExp(ui->lineEditOld->text());
+    if(regEx.isValid()){
         if(delegateBefore)
             delete delegateBefore;
-        delegateBefore = new RegExDelegate(this, regEx, RegExDelegateType::Match, \
-                                           Qt::red, Qt::white);
+        delegateBefore = new RegExDelegate(this, RegExDelegateType::Match, regEx,  \
+                                           ui->lineEditNew->text(), Qt::darkRed, Qt::white);
         ui->listBefore->setItemDelegate(delegateBefore);
         this->focusNextChild();
     }
@@ -137,7 +150,20 @@ void Rename::on_lineEditOld_returnPressed()
 
 void Rename::on_lineEditNew_returnPressed()
 {
+    if(checkFilename(ui->lineEditNew->text()))
+        qDebug() << "OK";
+    else
+        qDebug() << "Nope";
 
+    QRegExp regEx = QRegExp(ui->lineEditOld->text());
+    if(regEx.isValid()){
+        if(delegateAfter)
+            delete delegateAfter;
+        delegateAfter = new RegExDelegate(this, RegExDelegateType::Replace, regEx,  \
+                                           ui->lineEditNew->text(), Qt::darkGreen, Qt::white);
+        ui->listAfter->setItemDelegate(delegateAfter);
+        this->focusNextChild();
+    }
 }
 
 void Rename::on_chkBoxGreedy_stateChanged(int /* state */)

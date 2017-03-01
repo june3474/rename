@@ -31,6 +31,7 @@ private:
     void init();
     void updateModel();
     QFileInfoList getFileInfoList(const QString &path, bool recursive);
+    bool checkFilename(QString fileName);
 
 private slots:
     void on_btnFileBrowse_clicked();
