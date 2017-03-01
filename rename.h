@@ -28,10 +28,15 @@ private:
     RegExDelegate *delegateBefore;
     RegExDelegate *delegateAfter;
 
+    bool dir_OK;
+    bool old_OK;
+    bool new_OK;
+
     void init();
     void updateModel();
     QFileInfoList getFileInfoList(const QString &path, bool recursive);
     bool checkFilename(QString fileName);
+    void setBtnRunEnable();
 
 private slots:
     void on_btnFileBrowse_clicked();
@@ -43,5 +48,6 @@ private slots:
     void on_chkBoxRecursive_stateChanged(int /* state */);
 
     void on_btnFileBrowse_pressed();
+    void on_btnRun_clicked();
 };
 #endif // RENAME_H

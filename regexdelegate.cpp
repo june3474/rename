@@ -2,7 +2,7 @@
 #include <QPainter>
 #include <QtDebug>
 
-RegExDelegate::RegExDelegate(QObject *parent, RegExDelegateType type, \
+RegExDelegate::RegExDelegate(QObject *parent, Type type, \
                              const QRegExp &regEx, const QString &after, \
                              const Qt::GlobalColor bgColor, const Qt::GlobalColor fgColor) :
     QStyledItemDelegate(parent), type(type), regEx(regEx), after(after), \
@@ -20,7 +20,7 @@ RegExDelegate::~RegExDelegate()
 void RegExDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, \
                           const QModelIndex &index) const
 {
-    if(type == RegExDelegateType::Match){
+    if(type == Match){
         paintMatch(painter, option, index);
     }
     else{ // if regEx!= Empty() && type == RegExDelegateType::Replace
@@ -57,11 +57,12 @@ void RegExDelegate::paintMatch(QPainter *painter, const QStyleOptionViewItem &op
 
     // draw the rest
     painter->drawText(rect, l[2]);
+
 }
 
 void RegExDelegate::paintReplace(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    if(after.isEmpty()){
+    if(after.isEmpty() || regEx.isEmpty()){
         QStyledItemDelegate::paint(painter, option, index);
         return;
     }

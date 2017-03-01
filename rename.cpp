@@ -11,6 +11,11 @@ Rename::Rename(QDialog *parent) :
     ui(new Ui::Rename)
 {
     ui->setupUi(this);
+
+    dir_OK = true;
+    old_OK = true;
+    new_OK = true;
+
     init();
 }
 
@@ -61,6 +66,8 @@ void Rename::updateModel()
         item->setEditable(false);
         model.appendRow(item);
     }
+
+    setBtnRunEnable();
 }
 
 QFileInfoList Rename::getFileInfoList(const QString &path, bool recursive)
@@ -80,16 +87,33 @@ QFileInfoList Rename::getFileInfoList(const QString &path, bool recursive)
     return fileInfoList;
 }
 
+/*
+ * very primitive filename validator
+ */
 bool Rename::checkFilename(QString fileName)
 {
-//#ifdef Q_WS_WIN
-    QRegExp filter = QRegExp("[/:*?\"<>|\\\\]");
-    if(filter.indexIn(fileName) == -1)
-        return true;
-    else
-        return false;
-//#endif
+    bool check = true;
+    QRegExp filter;
 
+#ifdef Q_WS_WIN // Windows
+    // check invalid character
+    filter = QRegExp("[/:*?\"<>|\\\\]");
+    if(fileName.contains(filter))
+        check = false;
+    if(fileName.startsWith('.'))
+        check = false;
+#else // POSIX
+    filter = QRegExp("[^0-9a-zA-Z._-]");
+    if(fileName.contains(filter))
+        check = false;
+#endif
+
+    return check;
+}
+
+void Rename::setBtnRunEnable()
+{
+    ui->btnRun->setEnabled(model.rowCount() && dir_OK && old_OK && new_OK);
 }
 
 void Rename::on_lineEditDir_returnPressed()
@@ -98,12 +122,15 @@ void Rename::on_lineEditDir_returnPressed()
     QFileInfo info = QFileInfo(path);
     if(info.isDir()){
         ui->lineEditDir->setText(path);
+        dir_OK = true;
         this->focusNextChild();
 
         updateModel();
     }
     else {
         model.clear();
+        dir_OK = false;
+        setBtnRunEnable();
         QMessageBox::critical(this, tr("Error"), tr("Invalid Directory!"));
         ui->lineEditDir->selectAll();
     }
@@ -115,6 +142,7 @@ void Rename::on_btnFileBrowse_clicked()
     QString dir = QFileDialog::getExistingDirectory(this, "Choose the directory", ui->lineEditDir->text());
     if(dir.isEmpty())
         dir = oldDir;
+    dir_OK = true;
     ui->lineEditDir->setText(dir);
     this->focusNextChild();
 
@@ -127,6 +155,13 @@ void Rename::on_comboBox_currentIndexChanged(int /* index */)
     updateModel();
 }
 
+/*
+ * Qt's regular expression. i.e. QRegExp is quite limited and a little bit
+ * different from that of perl or python.
+ * The same goes for the way of expressing newly replaced phrase.
+ * So, this function and on_lineEditNew_returnPressed() function below in particular
+ * would be ideal if written in python or using embedded perl.
+ */
 void Rename::on_lineEditOld_returnPressed()
 {
     //QString escapedStr = QRegExp::escape(ui->lineEditOld->text());
@@ -134,41 +169,55 @@ void Rename::on_lineEditOld_returnPressed()
 
     QRegExp regEx = QRegExp(ui->lineEditOld->text());
     if(regEx.isValid()){
+        regEx.setMinimal(ui->chkBoxGreedy->isChecked());
+
         if(delegateBefore)
             delete delegateBefore;
-        delegateBefore = new RegExDelegate(this, RegExDelegateType::Match, regEx,  \
+        delegateBefore = new RegExDelegate(this, RegExDelegate::Match, regEx,  \
                                            ui->lineEditNew->text(), Qt::darkRed, Qt::white);
         ui->listBefore->setItemDelegate(delegateBefore);
+        old_OK = true;
+        setBtnRunEnable();
+
+        if(!ui->lineEditNew->text().isEmpty())
+            on_lineEditNew_returnPressed();
+
         this->focusNextChild();
     }
     else {
-        ui->btnRun->setDisabled(true);
         QMessageBox::critical(this, tr("Error"), tr("Invalid Regular Expression!"));
+        old_OK = false;
+        setBtnRunEnable();
         ui->lineEditOld->selectAll();
     }
 }
 
 void Rename::on_lineEditNew_returnPressed()
 {
-    if(checkFilename(ui->lineEditNew->text()))
-        qDebug() << "OK";
-    else
-        qDebug() << "Nope";
+    if(!checkFilename(ui->lineEditNew->text())){
+        QMessageBox::critical(this, tr("Error"), tr("Contains possibly invalid character(s) for filename!"));
+        new_OK = false;
+        setBtnRunEnable();
+        ui->lineEditNew->selectAll();
+        return;
+    }
 
     QRegExp regEx = QRegExp(ui->lineEditOld->text());
     if(regEx.isValid()){
         if(delegateAfter)
             delete delegateAfter;
-        delegateAfter = new RegExDelegate(this, RegExDelegateType::Replace, regEx,  \
+        delegateAfter = new RegExDelegate(this, RegExDelegate::Replace, regEx,  \
                                            ui->lineEditNew->text(), Qt::darkGreen, Qt::white);
         ui->listAfter->setItemDelegate(delegateAfter);
+        new_OK = true;
+        setBtnRunEnable();
         this->focusNextChild();
     }
 }
 
 void Rename::on_chkBoxGreedy_stateChanged(int /* state */)
 {
-
+    on_lineEditOld_returnPressed();
 }
 
 void Rename::on_chkBoxRecursive_stateChanged(int /* state */)
@@ -179,4 +228,9 @@ void Rename::on_chkBoxRecursive_stateChanged(int /* state */)
 void Rename::on_btnFileBrowse_pressed()
 {
     on_btnFileBrowse_clicked();
+}
+
+void Rename::on_btnRun_clicked()
+{
+    // To-be
 }

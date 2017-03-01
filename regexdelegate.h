@@ -4,13 +4,14 @@
 
 const int PADDING_LEFT = 5;
 
-enum class RegExDelegateType {Replace, Match};
+
 
 
 class RegExDelegate : public QStyledItemDelegate
 {
 public:
-    RegExDelegate(QObject *parent = 0, RegExDelegateType type = RegExDelegateType::Match,\
+    enum Type {Replace, Match};
+    RegExDelegate(QObject *parent = 0, Type type = Match,\
                   const QRegExp &regEx = QRegExp(), const QString &after = QString(), \
                   const Qt::GlobalColor bgColor = Qt::darkBlue, const Qt::GlobalColor fgColor = Qt::white);
     ~RegExDelegate();
@@ -33,7 +34,7 @@ public:
     void setAfter(const QString &str);
 
 private:
-    RegExDelegateType type;
+    Type type;
     QRegExp regEx;
     QString after;
     Qt::GlobalColor bgColor;
