@@ -6,6 +6,7 @@
 #include <QFileInfoList>
 
 #include "ui_rename.h"
+#include "ui_progress.h"
 #include "regexdelegate.h"
 
 namespace Ui {

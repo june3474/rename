@@ -5,6 +5,7 @@
 
 #include "rename.h"
 #include "ui_rename.h"
+#include "ui_progress.h"
 
 Rename::Rename(QDialog *parent) :
     QDialog(parent),

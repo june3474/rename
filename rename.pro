@@ -19,7 +19,8 @@ SOURCES += main.cpp\
 HEADERS  += rename.h \
     regexdelegate.h
 
-FORMS    += rename.ui
+FORMS    += rename.ui \
+    progress.ui
 
 RESOURCES +=
 
