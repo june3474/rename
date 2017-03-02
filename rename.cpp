@@ -4,6 +4,7 @@
 #include <QMessageBox>
 
 #include "rename.h"
+#include "progress.h"
 #include "ui_rename.h"
 #include "ui_progress.h"
 
@@ -233,5 +234,7 @@ void Rename::on_btnFileBrowse_pressed()
 
 void Rename::on_btnRun_clicked()
 {
-    // To-be
+    Progress dialog(this);
+
+    dialog.exec();
 }
