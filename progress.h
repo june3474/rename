@@ -15,6 +15,11 @@ public:
     explicit Progress(QWidget *parent = 0);
     ~Progress();
 
+
+
+private slots:
+    void on_btnOK_clicked();
+
 private:
     Ui::Progress *ui;
 };

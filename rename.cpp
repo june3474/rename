@@ -236,5 +236,13 @@ void Rename::on_btnRun_clicked()
 {
     Progress dialog(this);
 
+    int row = model.rowCount();
+    for(int i=0; i<row; i++){
+        QString str = model.item(i)->data(Qt::DisplayRole).toString();
+        QTableWidgetItem item(str);
+
+    }
+
     dialog.exec();
+
 }

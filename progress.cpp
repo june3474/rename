@@ -12,3 +12,9 @@ Progress::~Progress()
 {
     delete ui;
 }
+
+void Progress::on_btnOK_clicked()
+{
+    close();
+}
+
