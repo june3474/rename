@@ -235,14 +235,18 @@ void Rename::on_btnFileBrowse_pressed()
 void Rename::on_btnRun_clicked()
 {
     Progress dialog(this);
-
+    //Progress *dialog = new Progress(this);
+    //dialog->setWindowModality(Qt::NonModal);
+    //Progress dialog(this);
+    dialog.exec();
+/*
     int row = model.rowCount();
     for(int i=0; i<row; i++){
         QString str = model.item(i)->data(Qt::DisplayRole).toString();
-        QTableWidgetItem item(str);
-
+        //QTableWidgetItem item(str);
+        qDebug() << str;
+        dialog->addItem(new QTableWidgetItem(str));
     }
-
-    dialog.exec();
+*/
 
 }
