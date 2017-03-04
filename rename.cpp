@@ -1,7 +1,9 @@
 #include <QDir>
-#include <QtDebug>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QScrollBar>
+
+#include <QtDebug>
 
 #include "rename.h"
 #include "progress.h"
@@ -17,8 +19,17 @@ Rename::Rename(QDialog *parent) :
     dir_OK = true;
     old_OK = true;
     new_OK = true;
+    dialog = 0;
 
     init();
+
+    // sync two listview's scrollbar
+    // Although an unnecessay sync occurs just once(think about it!), no infinite loop happens.
+    QObject::connect(ui->listBefore->verticalScrollBar(), SIGNAL(valueChanged(int)), \
+                     ui->listAfter->verticalScrollBar(), SLOT(setValue(int)));
+    QObject::connect(ui->listAfter->verticalScrollBar(), SIGNAL(valueChanged(int)), \
+                     ui->listBefore->verticalScrollBar(), SLOT(setValue(int)));
+
 }
 
 Rename::~Rename()
@@ -26,6 +37,9 @@ Rename::~Rename()
     delete ui;
     delete delegateBefore;
     delete delegateAfter;
+    if(dialog){
+        delete dialog;
+    }
 }
 
 void Rename::init()
@@ -53,7 +67,7 @@ void Rename::init()
 
     ui->listAfter->setModel(&model);
     delegateAfter = new RegExDelegate(this);
-    ui->listAfter->setItemDelegate(delegateAfter);
+    ui->listAfter->setItemDelegate(delegateAfter);    
 }
 
 void Rename::updateModel()
@@ -63,8 +77,13 @@ void Rename::updateModel()
                                                  ui->chkBoxRecursive->isChecked());
 
     foreach(QFileInfo fileInfo, fileInfoList){
+        // file name at DisplayRole
         QStandardItem *item = new QStandardItem(fileInfo.fileName());
-        item->setData(fileInfo.absoluteFilePath(), Qt::ToolTipRole);
+        // file name with full path at ToolTiprole
+        item->setData(fileInfo.canonicalFilePath(), Qt::ToolTipRole);
+        // file path excluding file name at UserRole. Not ends with '/'
+        item->setData(fileInfo.canonicalPath(), Qt::UserRole);
+
         item->setEditable(false);
         model.appendRow(item);
     }
@@ -234,19 +253,31 @@ void Rename::on_btnFileBrowse_pressed()
 
 void Rename::on_btnRun_clicked()
 {
-    Progress dialog(this);
-    //Progress *dialog = new Progress(this);
-    //dialog->setWindowModality(Qt::NonModal);
-    //Progress dialog(this);
-    dialog.exec();
-/*
-    int row = model.rowCount();
-    for(int i=0; i<row; i++){
-        QString str = model.item(i)->data(Qt::DisplayRole).toString();
-        //QTableWidgetItem item(str);
-        qDebug() << str;
-        dialog->addItem(new QTableWidgetItem(str));
-    }
-*/
+    if(!dialog)
+        dialog = new Progress(this);
+    dialog->setModal(true);
+    dialog->show();
 
+    int count = model.rowCount();
+    dialog->setUpProgressBar(count);
+    for(int i=0; i<count; i++){
+        QString oldNameWithPath = model.item(i)->data(Qt::ToolTipRole).toString();
+        QString oldName = model.item(i)->data(Qt::DisplayRole).toString();
+        QString newName = oldName;
+        newName.replace(QRegExp(ui->lineEditOld->text()), \
+                                          ui->lineEditNew->text());
+        QString newNameWithPath = model.item(i)->data(Qt::UserRole).toString() + \
+                                  QDir::separator() + newName;
+        QString displayStr = oldName + " -> " + newName;
+
+        dialog->addItem(displayStr);
+        bool result = true;
+        if(oldName != newName){
+            QFile f(oldNameWithPath);
+            result = f.rename(newNameWithPath);
+        }
+        dialog->addResult(result);
+        dialog->updateProgressBar(i+1);
+        qApp->processEvents();
+    }
 }

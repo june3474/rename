@@ -12,7 +12,7 @@ class RegExDelegate : public QStyledItemDelegate
 public:
     enum Type {Replace, Match};
     RegExDelegate(QObject *parent = 0, Type type = Match,\
-                  const QRegExp &regEx = QRegExp(), const QString &after = QString(), \
+                  const QRegExp &regEx = QRegExp(), const QString &newPhrase = QString(), \
                   const Qt::GlobalColor bgColor = Qt::darkBlue, const Qt::GlobalColor fgColor = Qt::white);
     ~RegExDelegate();
 
@@ -36,7 +36,7 @@ public:
 private:
     Type type;
     QRegExp regEx;
-    QString after;
+    QString newPhrase;
     Qt::GlobalColor bgColor;
     Qt::GlobalColor fgColor;
 

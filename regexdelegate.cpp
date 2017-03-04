@@ -3,9 +3,9 @@
 #include <QtDebug>
 
 RegExDelegate::RegExDelegate(QObject *parent, Type type, \
-                             const QRegExp &regEx, const QString &after, \
+                             const QRegExp &regEx, const QString &newPhrase, \
                              const Qt::GlobalColor bgColor, const Qt::GlobalColor fgColor) :
-    QStyledItemDelegate(parent), type(type), regEx(regEx), after(after), \
+    QStyledItemDelegate(parent), type(type), regEx(regEx), newPhrase(newPhrase), \
     bgColor(bgColor), fgColor(fgColor)
 {
 
@@ -31,7 +31,7 @@ void RegExDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
 
 void RegExDelegate::paintMatch(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    if(regEx.isEmpty()){
+    if(regEx.isEmpty() || (option.state & QStyle::State_Selected)){
         QStyledItemDelegate::paint(painter, option, index);
         return;
     }
@@ -62,7 +62,7 @@ void RegExDelegate::paintMatch(QPainter *painter, const QStyleOptionViewItem &op
 
 void RegExDelegate::paintReplace(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    if(after.isEmpty() || regEx.isEmpty()){
+    if(newPhrase.isEmpty() || regEx.isEmpty() || (option.state & QStyle::State_Selected)){
         QStyledItemDelegate::paint(painter, option, index);
         return;
     }
@@ -71,7 +71,7 @@ void RegExDelegate::paintReplace(QPainter *painter, const QStyleOptionViewItem &
     rect.adjust(PADDING_LEFT, 0, 0, 0);
 
     QStringList l = splitString(QString(index.data().toString()));
-    QString replacedStr = index.data().toString().replace(regEx, after);
+    QString replacedStr = index.data().toString().replace(regEx, newPhrase);
 
     // draw the first part
     painter->drawText(rect, l[0]);
@@ -148,10 +148,10 @@ void RegExDelegate::setRegEx(const QRegExp &regEx)
 
 QString RegExDelegate::getAfter() const
 {
-    return after;
+    return newPhrase;
 }
 
 void RegExDelegate::setAfter(const QString &str)
 {
-    after = str;
+    newPhrase = str;
 }

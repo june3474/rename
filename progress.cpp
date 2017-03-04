@@ -10,9 +10,6 @@ Progress::Progress(QWidget *parent) :
     ui->setupUi(this);
 
     initTableWidget();
-
-    //for(int i=0; i<5; i++)
-        //addItem(new QTableWidgetItem(QString::number(i)));
 }
 
 Progress::~Progress()
@@ -33,12 +30,16 @@ void Progress::initTableWidget()
     ui->tableWidget->setColumnWidth(1, width);
     header->setResizeMode(header->logicalIndex(0), QHeaderView::Stretch);
 
+    // make not editable
+    ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
     // hide grid
+    //ui->tableWidget->setShowGrid(false);
 }
 
 void Progress::setUpProgressBar(int maxStep)
 {
-    ui->progressBar->setMaximum(maxStep);
+    ui->progressBar->setRange(0, maxStep);
 }
 
 void Progress::updateProgressBar(int currentStep)
@@ -46,15 +47,38 @@ void Progress::updateProgressBar(int currentStep)
     ui->progressBar->setValue(currentStep);
 }
 
-void Progress::addItem(QTableWidgetItem *item)
+void Progress::addItem(QString &fileName)
 {
     int row = ui->tableWidget->rowCount();
-    ui->tableWidget->insertRow(row);
-    ui->tableWidget->setItem(row, 0, item);
+    ui->tableWidget->insertRow(row);    
+    ui->tableWidget->setItem(row, 0, (new QTableWidgetItem(fileName)));
+}
+
+void Progress::addResult(bool result)
+{
+    int row = ui->tableWidget->rowCount() -1;
+    QTableWidgetItem *item = new QTableWidgetItem("OK");
+    item->setTextAlignment(Qt::AlignCenter);
+
+    if(result){
+        item->setText(QString("OK"));
+    } else {
+        item->setText("Fail");
+        item->setForeground(Qt::red);
+    }
+
+    ui->tableWidget->setItem(row, 1, item);
 }
 
 void Progress::on_btnOK_clicked()
 {
     close();
+}
+
+void Progress::closeEvent(QCloseEvent *event)
+{
+    ui->tableWidget->setRowCount(0);
+    ui->progressBar->reset();
+    event->accept();
 }
 

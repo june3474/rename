@@ -6,8 +6,8 @@
 #include <QFileInfoList>
 
 #include "ui_rename.h"
-#include "ui_progress.h"
 #include "regexdelegate.h"
+#include "progress.h"
 
 namespace Ui {
 class Rename;
@@ -28,6 +28,7 @@ private:
     QStandardItemModel model;
     RegExDelegate *delegateBefore;
     RegExDelegate *delegateAfter;
+    Progress *dialog;
 
     bool dir_OK;
     bool old_OK;

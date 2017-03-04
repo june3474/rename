@@ -2,7 +2,7 @@
 #define PROGRESS_H
 
 #include <QDialog>
-#include <QTableWidgetItem>
+#include <QCloseEvent>
 
 namespace Ui {
 class Progress;
@@ -19,13 +19,18 @@ public:
     void initTableWidget();
     void setUpProgressBar(int maxStep);
     void updateProgressBar(int currentStep);
-    void addItem(QTableWidgetItem *item);
+    void addItem(QString &fileName);
+    void addResult(bool result);
 
 private slots:
     void on_btnOK_clicked();
 
 private:
     Ui::Progress *ui;
+
+protected:
+    // overload QWidget::closeEvent(QCloseEvent *)
+    void closeEvent(QCloseEvent *event);
 };
 
 #endif // PROGRESS_H
