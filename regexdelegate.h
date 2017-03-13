@@ -11,14 +11,13 @@ class RegExDelegate : public QStyledItemDelegate
 {
 public:
     enum Type {Replace, Match};
-    RegExDelegate(QObject *parent = 0, Type type = Match,\
+    RegExDelegate(QAbstractItemView *parent = 0, Type type = Match,\
                   const QRegExp &regEx = QRegExp(), const QString &newPhrase = QString(), \
                   const Qt::GlobalColor bgColor = Qt::darkBlue, const Qt::GlobalColor fgColor = Qt::white);
     ~RegExDelegate();
 
     // function overload
     virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-    QStringList splitString(const QString &str) const;
 
     // getter & setter
     Qt::GlobalColor getBgColor() const;
@@ -33,12 +32,18 @@ public:
     QString getAfter() const;
     void setAfter(const QString &str);
 
+public slots:
+    void repaint();
+
 private:
     Type type;
     QRegExp regEx;
     QString newPhrase;
     Qt::GlobalColor bgColor;
     Qt::GlobalColor fgColor;
+
+    // helper function
+    QStringList splitString(const QString &str) const;
 
     void paintMatch(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     void paintReplace(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;

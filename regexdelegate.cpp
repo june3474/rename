@@ -1,8 +1,9 @@
 #include "regexdelegate.h"
 #include <QPainter>
+#include <QAbstractItemView>
 #include <QtDebug>
 
-RegExDelegate::RegExDelegate(QObject *parent, Type type, \
+RegExDelegate::RegExDelegate(QAbstractItemView *parent, Type type, \
                              const QRegExp &regEx, const QString &newPhrase, \
                              const Qt::GlobalColor bgColor, const Qt::GlobalColor fgColor) :
     QStyledItemDelegate(parent), type(type), regEx(regEx), newPhrase(newPhrase), \
@@ -28,9 +29,15 @@ void RegExDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
     }
 }
 
+void RegExDelegate::repaint()
+{
+    qobject_cast<QAbstractItemView *>(parent())->viewport()->repaint();
+}
+
 
 void RegExDelegate::paintMatch(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    // use parent's paint method
     if(regEx.isEmpty() || (option.state & QStyle::State_Selected)){
         QStyledItemDelegate::paint(painter, option, index);
         return;
@@ -40,7 +47,7 @@ void RegExDelegate::paintMatch(QPainter *painter, const QStyleOptionViewItem &op
     QRect rect = option.rect;
     rect.adjust(PADDING_LEFT, 0, 0, 0);
 
-    QStringList l = splitString(QString(index.data().toString()));
+    QStringList l = splitString(index.data().toString());
 
     // draw the first part
     painter->drawText(rect, l[0]);
@@ -70,8 +77,7 @@ void RegExDelegate::paintReplace(QPainter *painter, const QStyleOptionViewItem &
     QRect rect = option.rect;
     rect.adjust(PADDING_LEFT, 0, 0, 0);
 
-    QStringList l = splitString(QString(index.data().toString()));
-    QString replacedStr = index.data().toString().replace(regEx, newPhrase);
+    QStringList l = splitString(index.data().toString());
 
     // draw the first part
     painter->drawText(rect, l[0]);
@@ -82,10 +88,10 @@ void RegExDelegate::paintReplace(QPainter *painter, const QStyleOptionViewItem &
     painter->setPen(QColor(fgColor));
     painter->setBackgroundMode(Qt::OpaqueMode);
     painter->setBackground(QBrush(bgColor));
-    QString replaced = replacedStr.mid(l[0].size(), \
-                       replacedStr.size() - l[0].size() - l[2].size());
-    painter->drawText(rect, replaced);
-    rect.adjust(QFontMetrics(option.font).width(replaced),0,0,0);
+    QString replacedStr = l[1].replace(regEx, newPhrase);
+    // QString.replace() replaces EVERY occurrence of the regular expression.
+    painter->drawText(rect, replacedStr);
+    rect.adjust(QFontMetrics(option.font).width(replacedStr),0,0,0);
     painter->restore();
 
     // draw the rest

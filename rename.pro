@@ -15,11 +15,13 @@ TEMPLATE = app
 SOURCES += main.cpp\
         rename.cpp \
     regexdelegate.cpp \
-    progress.cpp
+    progress.cpp \
+    mylineedit.cpp
 
 HEADERS  += rename.h \
     regexdelegate.h \
-    progress.h
+    progress.h \
+    mylineedit.h
 
 FORMS    += rename.ui \
     progress.ui

@@ -42,13 +42,15 @@ private:
 
 private slots:
     void on_btnFileBrowse_clicked();
+    void on_lineEditDir_focusOut();
     void on_lineEditDir_returnPressed();
     void on_comboBox_currentIndexChanged(int /* index */);
+    void on_lineEditOld_focusOut();
     void on_lineEditOld_returnPressed();
+    void on_lineEditNew_focusOut();
     void on_lineEditNew_returnPressed();
     void on_chkBoxGreedy_stateChanged(int /* state */);
     void on_chkBoxRecursive_stateChanged(int /* state */);
-
     void on_btnFileBrowse_pressed();
     void on_btnRun_clicked();
 };
