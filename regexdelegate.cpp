@@ -3,13 +3,16 @@
 #include <QAbstractItemView>
 #include <QtDebug>
 
-RegExDelegate::RegExDelegate(QAbstractItemView *parent, Type type, \
-                             const QRegExp &regEx, const QString &newPhrase, \
-                             const Qt::GlobalColor bgColor, const Qt::GlobalColor fgColor) :
-    QStyledItemDelegate(parent), type(type), regEx(regEx), newPhrase(newPhrase), \
-    bgColor(bgColor), fgColor(fgColor)
+RegExDelegate::RegExDelegate(QAbstractItemView *parent, Type type,\
+                             const Qt::GlobalColor bgColor, const Qt::GlobalColor fgColor,\
+                             const QRegExp &regEx, const QString &newPhrase) :
+    QStyledItemDelegate(parent)
 {
-
+    this->type = type;
+    this->regEx = regEx;
+    this->newPhrase = newPhrase;
+    this->bgColor = bgColor;
+    this->fgColor = fgColor;
 }
 
 RegExDelegate::~RegExDelegate()
@@ -29,11 +32,10 @@ void RegExDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
     }
 }
 
-void RegExDelegate::repaint()
+void RegExDelegate::refresh()
 {
     qobject_cast<QAbstractItemView *>(parent())->viewport()->repaint();
 }
-
 
 void RegExDelegate::paintMatch(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
@@ -130,6 +132,7 @@ Qt::GlobalColor RegExDelegate::getBgColor() const
 void RegExDelegate::setBgColor(const Qt::GlobalColor &color)
 {
     bgColor = color;
+    refresh();
 }
 
 Qt::GlobalColor RegExDelegate::getFgColor() const
@@ -140,6 +143,7 @@ Qt::GlobalColor RegExDelegate::getFgColor() const
 void RegExDelegate::setFgColor(const Qt::GlobalColor &color)
 {
     fgColor = color;
+    refresh();
 }
 
 QRegExp RegExDelegate::getRegEx() const

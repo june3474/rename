@@ -12,8 +12,8 @@ class RegExDelegate : public QStyledItemDelegate
 public:
     enum Type {Replace, Match};
     RegExDelegate(QAbstractItemView *parent = 0, Type type = Match,\
-                  const QRegExp &regEx = QRegExp(), const QString &newPhrase = QString(), \
-                  const Qt::GlobalColor bgColor = Qt::darkBlue, const Qt::GlobalColor fgColor = Qt::white);
+                  const Qt::GlobalColor bgColor = Qt::darkBlue, const Qt::GlobalColor fgColor = Qt::white,\
+                  const QRegExp &regEx = QRegExp(), const QString &newPhrase = QString());
     ~RegExDelegate();
 
     // function overload
@@ -33,7 +33,7 @@ public:
     void setAfter(const QString &str);
 
 public slots:
-    void repaint();
+    void refresh();
 
 private:
     Type type;

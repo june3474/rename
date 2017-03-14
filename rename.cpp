@@ -8,6 +8,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QScrollBar>
+#include <QtDebug>
 
 #include "rename.h"
 #include "progress.h"
@@ -65,11 +66,11 @@ void Rename::init()
 
     //view
     ui->listBefore->setModel(&model);
-    delegateBefore = new RegExDelegate(ui->listBefore);
+    delegateBefore = new RegExDelegate(ui->listBefore, RegExDelegate::Match, Qt::darkRed);
     ui->listBefore->setItemDelegate(delegateBefore);
 
     ui->listAfter->setModel(&model);
-    delegateAfter = new RegExDelegate(ui->listAfter);
+    delegateAfter = new RegExDelegate(ui->listAfter, RegExDelegate::Replace);
     ui->listAfter->setItemDelegate(delegateAfter);    
 }
 
@@ -111,9 +112,7 @@ QFileInfoList Rename::getFileInfoList(const QString &path, bool recursive)
     return fileInfoList;
 }
 
-/*
- * very primitive filename validator
- */
+// very primitive filename validator
 bool Rename::checkFilename(QString fileName)
 {
     bool check = true;
@@ -142,6 +141,10 @@ void Rename::setBtnRunEnable()
 
 void Rename::on_lineEditDir_focusOut()
 {
+    // prevent showing MessageBox when clicking btnFileBrowse
+    if(ui->btnFileBrowse->hasFocus())
+        return;
+
     QString path = QDir::cleanPath(QDir::toNativeSeparators(ui->lineEditDir->text()));
     QFileInfo info = QFileInfo(path);
 
@@ -183,6 +186,7 @@ void Rename::on_btnFileBrowse_clicked()
     QString dir = QFileDialog::getExistingDirectory(this, "Choose the directory", ui->lineEditDir->text());
     if(dir.isEmpty())
         dir = oldDir;
+    ui->lineEditDir->setIcon(MyLineEdit::OK);
     dir_OK = true;
     ui->lineEditDir->setText(dir);
     this->focusNextChild();
@@ -207,30 +211,26 @@ void Rename::on_lineEditOld_focusOut()
     //QString escapedStr = QRegExp::escape(ui->lineEditOld->text());
     //QRegExp regEx = QRegExp(escapedStr);
 
-    if(ui->lineEditOld->text().isEmpty()){
-        ui->lineEditOld->setIcon(MyLineEdit::DEFAULT);
-        old_OK = false;
-        setBtnRunEnable();
-        return;
-    }
-
     QRegExp regEx = QRegExp(ui->lineEditOld->text());
+    regEx.setMinimal(!ui->chkBoxGreedy->isChecked());
+
     if(regEx.isValid()){
-        ui->lineEditOld->setIcon(MyLineEdit::OK);
-        old_OK = true;
+        // empty regEx is valid too.
+        if(ui->lineEditOld->text().isEmpty()){
+            ui->lineEditOld->setIcon(MyLineEdit::DEFAULT);
+            old_OK = false;
+        }
+        else {
+            ui->lineEditOld->setIcon(MyLineEdit::OK);
+            old_OK = true;
+        }
         setBtnRunEnable();
-
-        regEx.setMinimal(!ui->chkBoxGreedy->isChecked());
-
-        if(delegateBefore)
-            delete delegateBefore;
-        delegateBefore = new RegExDelegate(ui->listBefore, RegExDelegate::Match, regEx,  \
-                                           ui->lineEditNew->text(), Qt::darkRed, Qt::white);
-        ui->listBefore->setItemDelegate(delegateBefore);
-
+        delegateBefore->setRegEx(regEx);
+        delegateBefore->refresh();        
+        delegateAfter->setRegEx(regEx);
         if(!ui->lineEditNew->text().isEmpty())
-            on_lineEditNew_returnPressed();
-    } else{
+            delegateAfter->refresh();
+    } else{ // invalid regular expression
         QMessageBox::critical(this, tr("Error"), tr("Invalid Regular Expression!"));
         ui->lineEditOld->setIcon(MyLineEdit::ERROR);
         old_OK = false;
@@ -254,28 +254,23 @@ void Rename::on_lineEditOld_returnPressed()
 
 void Rename::on_lineEditNew_focusOut()
 {
-
-    if(ui->lineEditNew->text().isEmpty()){
-        ui->lineEditNew->setIcon(MyLineEdit::DEFAULT);
-        new_OK = false;
-        setBtnRunEnable();
-        return;
-    }
-
     if(checkFilename(ui->lineEditNew->text())){
+        if(ui->lineEditNew->text().isEmpty()){
+            ui->lineEditNew->setIcon(MyLineEdit::DEFAULT);
+            new_OK = false;
+        }
+        else {
+            ui->lineEditNew->setIcon(MyLineEdit::OK);
+            new_OK = true;
+        }
+        setBtnRunEnable();
+        delegateAfter->setAfter(ui->lineEditNew->text());
         QRegExp regEx = QRegExp(ui->lineEditOld->text());
         if(regEx.isValid()){
             regEx.setMinimal(!ui->chkBoxGreedy->isChecked());
-            if(delegateAfter)
-                delete delegateAfter;
-            delegateAfter = new RegExDelegate(ui->listAfter, RegExDelegate::Replace, regEx,  \
-                                               ui->lineEditNew->text(), Qt::darkGreen, Qt::white);
-            ui->listAfter->setItemDelegate(delegateAfter);
+            delegateAfter->refresh();
         }
-        ui->lineEditNew->setIcon(MyLineEdit::OK);
-        new_OK = true;
-        setBtnRunEnable();
-    } else {
+    } else { // invalid file name
         ui->lineEditNew->setIcon(MyLineEdit::ERROR);
         new_OK = false;
         setBtnRunEnable();
@@ -299,7 +294,7 @@ void Rename::on_lineEditNew_returnPressed()
 
 void Rename::on_chkBoxGreedy_stateChanged(int /* state */)
 {
-    on_lineEditOld_returnPressed();
+    on_lineEditOld_focusOut();
 }
 
 void Rename::on_chkBoxRecursive_stateChanged(int /* state */)
