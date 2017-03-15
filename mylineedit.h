@@ -5,6 +5,8 @@
 ** Use, modification and distribution is allowed without limitation,
 ** warranty, liability or support of any kind.
 **
+** - modified by dks. Mar 2017.
+**
 ****************************************************************************/
 #ifndef MYLINEEDIT_H
 #define MYLINEEDIT_H
@@ -33,6 +35,10 @@ protected:
 
 signals:
     void focusOut();
+    void buttonClicked(bool checked);
+
+private slots:
+    void buttonClick(bool checked);
 
 private:
     QToolButton *button;

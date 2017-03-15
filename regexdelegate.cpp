@@ -131,6 +131,9 @@ Qt::GlobalColor RegExDelegate::getBgColor() const
 
 void RegExDelegate::setBgColor(const Qt::GlobalColor &color)
 {
+    if(bgColor == color)
+        return;
+
     bgColor = color;
     refresh();
 }
@@ -142,6 +145,9 @@ Qt::GlobalColor RegExDelegate::getFgColor() const
 
 void RegExDelegate::setFgColor(const Qt::GlobalColor &color)
 {
+    if(fgColor == color)
+        return;
+
     fgColor = color;
     refresh();
 }
@@ -153,7 +159,17 @@ QRegExp RegExDelegate::getRegEx() const
 
 void RegExDelegate::setRegEx(const QRegExp &regEx)
 {
+    if(this->regEx == regEx)
+        return;
+
     this->regEx = regEx;
+    if(type == RegExDelegate::Match){
+        refresh();
+    }
+    else { // type == RegExDelegate::Replace
+       if(!newPhrase.isEmpty())
+           refresh();
+    }
 }
 
 QString RegExDelegate::getAfter() const
@@ -163,5 +179,11 @@ QString RegExDelegate::getAfter() const
 
 void RegExDelegate::setAfter(const QString &str)
 {
+    if(newPhrase == str)
+        return;
+
     newPhrase = str;
+    if(type == RegExDelegate::Replace && !regEx.isEmpty()){
+        refresh();
+    }
 }

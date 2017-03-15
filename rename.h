@@ -30,9 +30,13 @@ private:
     RegExDelegate *delegateAfter;
     Progress *dialog;
 
-    bool dir_OK;
-    bool old_OK;
-    bool new_OK;
+    bool Dir_OK;
+    bool RegEx_OK;
+    bool NewPhrase_OK;
+
+    QString oldDir;
+    QString oldRegEx;
+    QString oldNewPhrase;
 
     void init();
     void updateModel();

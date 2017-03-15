@@ -2,6 +2,7 @@
 
 #include <QToolButton>
 #include <QStyle>
+#include <QtDebug>
 
 /************************************************
  * binary representations of two icons.
@@ -211,7 +212,7 @@ MyLineEdit::MyLineEdit(QWidget *parent)
     setMinimumSize(qMax(msz.width(), button->sizeHint().height() + frameWidth * 2 + 2),
                    qMax(msz.height(), button->sizeHint().height() + frameWidth * 2 + 2));
 
-    //setIcon(MyLineEdit::DEFAULT);
+    connect(button, SIGNAL(clicked(bool)), this, SLOT(buttonClick(bool)));
 }
 
 MyLineEdit::~MyLineEdit()
@@ -252,7 +253,11 @@ void MyLineEdit::resizeEvent(QResizeEvent *)
 
 void MyLineEdit::focusOutEvent(QFocusEvent *e)
 {
-    emit focusOut();
     QLineEdit::focusOutEvent(e);
+    emit focusOut();
 }
 
+void MyLineEdit::buttonClick(bool checked)
+{
+    emit buttonClicked(checked);
+}
