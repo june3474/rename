@@ -32,6 +32,9 @@ public:
     QString getAfter() const;
     void setAfter(const QString &str);
 
+    // helper function
+    static QStringList splitString(const QRegExp regEx, const QString &str);
+
 public slots:
     void refresh();
 
@@ -42,8 +45,6 @@ private:
     Qt::GlobalColor bgColor;
     Qt::GlobalColor fgColor;
 
-    // helper function
-    QStringList splitString(const QString &str) const;
 
     void paintMatch(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     void paintReplace(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;

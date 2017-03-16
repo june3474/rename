@@ -2,7 +2,6 @@
 
 #include <QToolButton>
 #include <QStyle>
-#include <QtDebug>
 
 /************************************************
  * binary representations of two icons.

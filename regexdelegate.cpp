@@ -1,7 +1,6 @@
 #include "regexdelegate.h"
 #include <QPainter>
 #include <QAbstractItemView>
-#include <QtDebug>
 
 RegExDelegate::RegExDelegate(QAbstractItemView *parent, Type type,\
                              const Qt::GlobalColor bgColor, const Qt::GlobalColor fgColor,\
@@ -49,7 +48,7 @@ void RegExDelegate::paintMatch(QPainter *painter, const QStyleOptionViewItem &op
     QRect rect = option.rect;
     rect.adjust(PADDING_LEFT, 0, 0, 0);
 
-    QStringList l = splitString(index.data().toString());
+    QStringList l = splitString(regEx, index.data().toString());
 
     // draw the first part
     painter->drawText(rect, l[0]);
@@ -79,7 +78,7 @@ void RegExDelegate::paintReplace(QPainter *painter, const QStyleOptionViewItem &
     QRect rect = option.rect;
     rect.adjust(PADDING_LEFT, 0, 0, 0);
 
-    QStringList l = splitString(index.data().toString());
+    QStringList l = splitString(regEx, index.data().toString());
 
     // draw the first part
     painter->drawText(rect, l[0]);
@@ -107,7 +106,7 @@ void RegExDelegate::paintReplace(QPainter *painter, const QStyleOptionViewItem &
  * The second will be the matching part.
  * The third part will be the remaining after the matching part.
  */
-QStringList RegExDelegate::splitString(const QString &str) const
+QStringList RegExDelegate::splitString(const QRegExp regEx, const QString &str)
 {
     QStringList result;
     int pos = regEx.indexIn(str);

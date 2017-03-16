@@ -26,7 +26,8 @@ HEADERS  += rename.h \
 FORMS    += rename.ui \
     progress.ui
 
-RESOURCES +=
+RESOURCES += \
+    rename.qrc
 
 DISTFILES += \
     resources/images/arrow.png \

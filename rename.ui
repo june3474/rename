@@ -22,6 +22,9 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetDefaultConstraint</enum>
+     </property>
      <item>
       <widget class="QLabel" name="label">
        <property name="text">
@@ -30,25 +33,29 @@
       </widget>
      </item>
      <item>
-      <widget class="MyLineEdit" name="lineEditDir"/>
+      <widget class="MyLineEdit" name="lineEditDir">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="btnFileBrowse">
-       <property name="maximumSize">
-        <size>
-         <width>30</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="focusPolicy">
-        <enum>Qt::StrongFocus</enum>
+      <widget class="QToolButton" name="btnFileBrowse">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="icon">
-        <iconset>
-         <normaloff>resources/images/folder.png</normaloff>resources/images/folder.png</iconset>
+        <iconset resource="rename.qrc">
+         <normaloff>:/images/resources/images/folder.png</normaloff>:/images/resources/images/folder.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -56,16 +63,16 @@
          <height>16</height>
         </size>
        </property>
-       <property name="autoDefault">
-        <bool>false</bool>
-       </property>
-       <property name="default">
-        <bool>false</bool>
-       </property>
       </widget>
      </item>
      <item>
       <widget class="QComboBox" name="comboBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="focusPolicy">
         <enum>Qt::StrongFocus</enum>
        </property>
@@ -86,7 +93,14 @@
       </widget>
      </item>
      <item>
-      <widget class="MyLineEdit" name="lineEditOld"/>
+      <widget class="MyLineEdit" name="lineEditOld">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -100,7 +114,14 @@
       </widget>
      </item>
      <item>
-      <widget class="MyLineEdit" name="lineEditNew"/>
+      <widget class="MyLineEdit" name="lineEditNew">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -129,6 +150,12 @@
        <widget class="QCheckBox" name="chkBoxGreedy">
         <property name="enabled">
          <bool>true</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
         <property name="text">
          <string>Greedy</string>
@@ -194,7 +221,7 @@
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap>resources/images/arrow.png</pixmap>
+        <pixmap resource="rename.qrc">:/images/resources/images/arrow.png</pixmap>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
@@ -259,6 +286,8 @@
   <tabstop>chkBoxRecursive</tabstop>
   <tabstop>btnRun</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="rename.qrc"/>
+ </resources>
  <connections/>
 </ui>

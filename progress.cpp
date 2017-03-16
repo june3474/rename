@@ -1,8 +1,6 @@
 #include "progress.h"
 #include "ui_progress.h"
 
-#include <QtDebug>
-
 Progress::Progress(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Progress)
@@ -54,19 +52,12 @@ void Progress::addItem(QString &fileName)
     ui->tableWidget->setItem(row, 0, (new QTableWidgetItem(fileName)));
 }
 
-void Progress::addResult(bool result)
+void Progress::addResult(QString result, QColor color)
 {
     int row = ui->tableWidget->rowCount() -1;
-    QTableWidgetItem *item = new QTableWidgetItem("OK");
+    QTableWidgetItem *item = new QTableWidgetItem(result);
     item->setTextAlignment(Qt::AlignCenter);
-
-    if(result){
-        item->setText(QString("OK"));
-    } else {
-        item->setText("Fail");
-        item->setForeground(Qt::red);
-    }
-
+    item->setForeground(QBrush(color));
     ui->tableWidget->setItem(row, 1, item);
 }
 

@@ -20,7 +20,7 @@ public:
     void setUpProgressBar(int maxStep);
     void updateProgressBar(int currentStep);
     void addItem(QString &fileName);
-    void addResult(bool result);
+    void addResult(QString result, QColor color);
 
 private slots:
     void on_btnOK_clicked();

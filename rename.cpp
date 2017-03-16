@@ -8,7 +8,6 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QScrollBar>
-#include <QtDebug>
 
 #include "rename.h"
 #include "progress.h"
@@ -21,10 +20,11 @@ Rename::Rename(QDialog *parent) :
 {
     ui->setupUi(this);
 
+    dialog = 0;
+
     Dir_OK = true;
     RegEx_OK = false;
     NewPhrase_OK = false;
-    dialog = 0;
 
     init();
 
@@ -52,7 +52,7 @@ void Rename::init()
     ui->lineEditDir->setText(QDir::currentPath());
 
     // Make sure that btnFileBrowse has not autoDefault property.
-    ui->btnFileBrowse->setAutoDefault(false);
+    ui->btnFileBrowse->setMinimumHeight(ui->lineEditDir->minimumHeight());
 
     //comboBox
     ui->comboBox->addItem("All (*)", \
@@ -61,6 +61,8 @@ void Rename::init()
                           (QStringList() << "*.jpg" << "*.png" << "*.bmp"));
     ui->comboBox->addItem("Multimedia (*.mp4,*.avi)", \
                           (QStringList() << "*.mp4" << "*.avi"));
+    ui->comboBox->setMinimumHeight(ui->lineEditDir->minimumHeight());
+
     //model
     updateModel();
 
@@ -315,23 +317,35 @@ void Rename::on_btnRun_clicked()
 
     int count = model.rowCount();
     dialog->setUpProgressBar(count);
+
     for(int i=0; i<count; i++){
         QString oldNameWithPath = model.item(i)->data(Qt::ToolTipRole).toString();
         QString oldName = model.item(i)->data(Qt::DisplayRole).toString();
-        QString newName = oldName;
-        newName.replace(QRegExp(ui->lineEditOld->text()), \
-                                          ui->lineEditNew->text());
+
+        QRegExp regEx = QRegExp(ui->lineEditOld->text());
+        QStringList l = RegExDelegate::splitString(regEx, oldName);
+        QString newName = l[0] + l[1].replace(regEx, ui->lineEditNew->text()) + l[2];
         QString newNameWithPath = model.item(i)->data(Qt::UserRole).toString() + \
                                   QDir::separator() + newName;
         QString displayStr = oldName + " -> " + newName;
 
         dialog->addItem(displayStr);
-        bool result = true;
+        QString result = QString(tr("Skip"));
+        QColor color = palette().color(QPalette::WindowText);
+
         if(oldName != newName){
             QFile f(oldNameWithPath);
-            result = f.rename(newNameWithPath);
+            if(f.rename(newNameWithPath)){
+                result = QString(tr("OK"));
+                color = QColor(Qt::darkGreen);
+            }
+            else {
+                result = QString(tr("Fail"));
+                color = QColor(Qt::red);
+            }
         }
-        dialog->addResult(result);
+
+        dialog->addResult(result, color);
         dialog->updateProgressBar(i+1);
         qApp->processEvents();
     }
