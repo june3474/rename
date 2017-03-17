@@ -52,7 +52,8 @@ void Rename::init()
     ui->lineEditDir->setText(QDir::currentPath());
 
     // Make sure that btnFileBrowse has not autoDefault property.
-    ui->btnFileBrowse->setMinimumHeight(ui->lineEditDir->minimumHeight());
+    ui->btnFileBrowse->setMinimumSize(ui->lineEditDir->minimumHeight(), \
+                                      ui->lineEditDir->minimumHeight());
 
     //comboBox
     ui->comboBox->addItem("All (*)", \
@@ -305,7 +306,9 @@ void Rename::on_chkBoxRecursive_stateChanged(int /* state */)
 
 void Rename::on_btnFileBrowse_pressed()
 {
+#ifdef Q_WS_MAC
     on_btnFileBrowse_clicked();
+#endif
 }
 
 void Rename::on_btnRun_clicked()
