@@ -55,7 +55,6 @@ private slots:
     void on_lineEditNew_returnPressed();
     void on_chkBoxGreedy_stateChanged(int /* state */);
     void on_chkBoxRecursive_stateChanged(int /* state */);
-    void on_btnFileBrowse_pressed();
     void on_btnRun_clicked();
 };
 #endif // RENAME_H

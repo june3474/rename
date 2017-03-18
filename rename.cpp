@@ -304,13 +304,6 @@ void Rename::on_chkBoxRecursive_stateChanged(int /* state */)
     updateModel();
 }
 
-void Rename::on_btnFileBrowse_pressed()
-{
-#ifdef Q_WS_MAC
-    on_btnFileBrowse_clicked();
-#endif
-}
-
 void Rename::on_btnRun_clicked()
 {
     if(!dialog)
