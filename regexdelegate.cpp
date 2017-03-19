@@ -70,7 +70,7 @@ void RegExDelegate::paintMatch(QPainter *painter, const QStyleOptionViewItem &op
 
 void RegExDelegate::paintReplace(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    if(newPhrase.isEmpty() || regEx.isEmpty() || (option.state & QStyle::State_Selected)){
+    if(regEx.isEmpty() || (option.state & QStyle::State_Selected)){
         QStyledItemDelegate::paint(painter, option, index);
         return;
     }
@@ -162,13 +162,7 @@ void RegExDelegate::setRegEx(const QRegExp &regEx)
         return;
 
     this->regEx = regEx;
-    if(type == RegExDelegate::Match){
-        refresh();
-    }
-    else { // type == RegExDelegate::Replace
-       if(!newPhrase.isEmpty())
-           refresh();
-    }
+    refresh();
 }
 
 QString RegExDelegate::getAfter() const

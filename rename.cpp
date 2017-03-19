@@ -24,7 +24,7 @@ Rename::Rename(QDialog *parent) :
 
     Dir_OK = true;
     RegEx_OK = false;
-    NewPhrase_OK = false;
+    NewPhrase_OK = true;
 
     init();
 
@@ -265,12 +265,11 @@ void Rename::on_lineEditNew_focusOut()
 
         if(ui->lineEditNew->text().isEmpty()){
             ui->lineEditNew->setIcon(MyLineEdit::DEFAULT);
-            NewPhrase_OK = false;
         }
         else {
             ui->lineEditNew->setIcon(MyLineEdit::OK);
-            NewPhrase_OK = true;
         }
+        NewPhrase_OK = true;
     } else { // invalid file name
         delegateAfter->setAfter(QString());
         ui->lineEditNew->setIcon(MyLineEdit::ERROR);
