@@ -26,10 +26,10 @@ void Progress::initTableWidget()
     int width = ui->tableWidget->fontMetrics().width("Status") + PADDING;
 
     ui->tableWidget->setColumnWidth(1, width);
-#if QT_VERSION >= 0x05000
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
     header->setSectionResizeMode(header->logicalIndex(0), QHeaderView::Stretch);
 #else
-    headerr->setResizeMode(header->logicalIndex(0), QHeaderView::Stretch);
+    header->setResizeMode(header->logicalIndex(0), QHeaderView::Stretch);
 #endif
     // make not editable
     ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
